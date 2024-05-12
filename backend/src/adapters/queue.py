@@ -1,9 +1,13 @@
+import logging
 import typing as tp
 
 import orjson
 import redis.asyncio as redis
 
 from src.core import BusAdapter
+from src.settings import settings
+
+logger = logging.getLogger(__name__)
 
 
 class QueueAdapter(BusAdapter):
@@ -15,7 +19,7 @@ class QueueAdapter(BusAdapter):
         self.redis = None
 
     async def up(self) -> None:
-        self.redis = await redis.from_url("redis://localhost")
+        self.redis = await redis.from_url(settings.REDIS_DSN)
 
     async def healthcheck(self) -> bool:
         if not self.redis:
@@ -24,6 +28,7 @@ class QueueAdapter(BusAdapter):
             await self.redis.ping()
             return True
         except redis.RedisError:
+            logger.exception("QueueAdapter is not healthy.")
             return False
 
     async def down(self) -> None:

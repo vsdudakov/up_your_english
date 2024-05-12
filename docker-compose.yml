@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - ./.infra/redis:/data
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+  backend:
+    build:
+      context: backend
+      dockerfile: ./Dockerfile
+    environment:
+      - REDIS_DSN=redis://redis:6379
+    ports:
+      - 8000:8000
+    command: make start
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: ./Dockerfile
+      args:
+        - VITE_SERVER_DOMAIN=http://localhost:8000
+        - VITE_WS_SERVER_DOMAIN=ws://localhost:8000
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+

@@ -30,10 +30,14 @@ class WebsocketService(Service):
             raise RuntimeError("WebSocket is not accepted. Run accept function")
         queue_adapter = self.bus.get_adapter(QueueAdapter)
         while True:
-            ws_message_dict = await queue_adapter.brpop(f"{settings.QUEUE_PREFIX}_{self.session_id}")
-            if not ws_message_dict:
-                continue
-            await asyncio.create_task(self.handle_ws_message(ws_message_dict))
+            try:
+                ws_message_dict = await queue_adapter.brpop(f"{settings.QUEUE_PREFIX}_{self.session_id}")
+                if not ws_message_dict:
+                    continue
+                await self.handle_ws_message(ws_message_dict)
+                await asyncio.sleep(0.5)
+            except Exception as e:
+                logger.exception("Error in listen loop: %s", e)
 
     async def close_ws(self) -> None:
         if self.session_id is None or self.websocket is None:
