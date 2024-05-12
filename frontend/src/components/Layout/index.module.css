@@ -1,0 +1,19 @@
+.layout {
+  height: 100vh;
+}
+
+.header {
+  padding: 0rem 1rem;
+}
+
+.mobileContent {
+  padding: 0.5rem;
+  overflow-y: scroll;
+  padding-bottom: 5rem;
+}
+
+.desktopContent {
+  padding: 1rem;
+  padding-right: 4.5rem;
+  overflow-y: scroll;
+}

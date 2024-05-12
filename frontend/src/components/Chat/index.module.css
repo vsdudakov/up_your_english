@@ -1,0 +1,15 @@
+.chatArea {
+}
+
+.chatMessagesList {
+  height: calc(100vh - 250px) !important;
+  overflow: auto;
+}
+
+.chatInput {
+  background-color: #141414;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  padding: 5px;
+}

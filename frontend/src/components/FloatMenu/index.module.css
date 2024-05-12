@@ -1,0 +1,14 @@
+.desktopFloatMenu {
+  top: 5rem;
+  right: 1rem;
+  height: 2rem;
+}
+
+.mobileFloatMenu {
+  bottom: 1.5rem;
+  right: 1rem;
+}
+
+.activeBtn {
+  background-color: #ff4d4f;
+}

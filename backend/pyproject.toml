@@ -1,0 +1,153 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Seva D <vsdudakov@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+uvicorn = "^0.29.0"
+fastapi = "^0.111.0"
+pydantic-settings = "^2.2.1"
+orjson = "^3.10.3"
+redis = {extras = ["hiredis"], version = "^5.0.4"}
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.6"
+mypy = "^1.7.1"
+isort = "^5.12.0"
+black = "^23.11.0"
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+pytest-asyncio = "^0.21.1"
+pytest-xdist = "^3.5.0"
+factory-boy = "^3.3.0"
+watchdog = "^3.0.0"
+responses = "^0.24.1"
+nest-asyncio = "^1.5.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+sections = [
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "FIRSTPARTY",
+    "LOCALPROJECT",
+    "LOCALFOLDER",
+]
+default_section = "THIRDPARTY"
+known_localproject = ["meetle"]
+
+[tool.mypy]
+python_version = "3.12"
+namespace_packages = true
+ignore_missing_imports = true
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+select = [
+    "F",  # pyflakes
+    "E", "W",  # pycodestyle
+    "UP",  # pyupgrade
+    "YTT",  # flake8-2020
+    "S",  # flake8-bandit
+    "BLE",  # flake8-blind-except
+    "B",  # flake8-bugbear
+    # "A001",  # flake8-builtins
+    "C4",  # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "ISC",  # flake8-implicit-str-concat
+    "G",  # flake8-logging-format
+    "INP",  # flake8-no-pep420
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PT",  # flake8-pytest-style
+    "RET501", "RET502",  # flake8-return
+    "SIM",  # flake8-simplify
+    "PTH",  # flake8-use-pathlib
+    "PGH",  # pygrep-hooks
+    "PLC", "PLE",  # Pylint
+    "RUF",  # Ruff-specific
+]
+ignore-init-module-imports = true
+ignore = [
+    "E731",  # do not assign a lambda expression, use a def
+    "E501",  # 'black' handles line length
+    "S101",  # impossible logic branches are denoted with 'assert'
+    "S104",  # bind to all interfaces is OK in Docker
+    "B008",  # function call (e.g. `Depends`) in argument defaults
+    "PT004",  # fixtures that don't return a value must start with an underscore
+    "PT005",  # fixtures that return a value mustn't start with an underscore
+    "SIM108",  # use ternary operator ... instead of if-else-block
+]
+fixable = [
+    "F401", # unused imports
+    "W292", # no newline at end of file
+    "W293", # blank line contains whitespace
+    "W291", # trailing whitespace
+]
+
+[tool.ruff.isort]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[tool.ruff.per-file-ignores]
+"tests/**.py" = [
+    "S105", "S106", "S107",  # tests can have hard-coded passwords
+    "S311",  # allow usage of module `random` in tests
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "*/tests/*",
+    "*/tests.py",
+    "*/commands/*",
+    "*/core/*",
+    "*/db/*",
+    "*/__init__.py",
+    "*/__main__.py",
+    "*/cli.py",
+    "*/version.py",
+    "*/setup.py",
+    "*/conftest.py",
+    "*/_version.py",
+    "*/_version.pyi",
+    "*/_version.pyi",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "@abstractmethod",
+    "@abc.abstractmethod",
+]
