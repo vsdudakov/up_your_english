@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { AntdProvider } from "./AntdProvider";
-import { WsProvider } from "./WsProvider";
+import { SessionProvider } from "./SessionProvider";
 
 const queryClient = new QueryClient();
 
@@ -13,7 +13,7 @@ export const Providers: React.FC<IProvidersProps> = ({ children }) => {
   return (
     <AntdProvider>
       <QueryClientProvider client={queryClient}>
-        <WsProvider>{children}</WsProvider>
+        <SessionProvider>{children}</SessionProvider>
       </QueryClientProvider>
     </AntdProvider>
   );

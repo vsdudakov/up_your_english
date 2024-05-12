@@ -2,42 +2,63 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import { Input as ChatInput, MessageList, type MessageType } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import { useMutation } from "@tanstack/react-query";
-import { Button, theme } from "antd";
+import { Button, Spin, theme } from "antd";
+import { v4 } from "uuid";
 
 import { postFetcher } from "@/helpers/fetchers";
 import { useTrans } from "@/hooks/useTrans";
 
+import type { IMessage } from "@/interfaces/chat";
+import { SessionContext } from "@/providers/SessionProvider";
 import { WsContext } from "@/providers/WsProvider";
 import styles from "./index.module.css";
 
 const { useToken } = theme;
 
-interface IMessage {
-  msg: string;
-  name: string;
-  date: string;
-}
-
 export const Chat: React.FC = () => {
   const inputRef: React.RefObject<HTMLTextAreaElement> = React.createRef();
   const listRef = React.createRef();
+  const { session } = useContext(SessionContext);
+
   const [inputValue, setInputValue] = useState<string>("");
   const { token } = useToken();
-  const [messages, setMessages] = useState<IMessage[]>([]);
-  const [typing, setTyping] = useState<boolean>(false);
+  const [messages, setMessages] = useState<Record<string, IMessage>>({});
   const { lastJsonMessage, isReady } = useContext(WsContext);
 
   const { t } = useTrans();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    setMessages({});
+  }, [session?.session_id]);
+
   useEffect(() => {
     if (lastJsonMessage) {
       switch (lastJsonMessage.message_type) {
-        case "MESSAGE":
-          setTyping(false);
-          setMessages((prevMessages) => [...prevMessages, lastJsonMessage.payload]);
+        case "WELCOME":
+          setMessages((prevMessages) => {
+            lastJsonMessage.message.render_message = <p>{lastJsonMessage.message.message}</p>;
+            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
+            return { ...prevMessages };
+          });
           break;
         case "TYPING":
-          setTyping(true);
+          setMessages((prevMessages) => {
+            lastJsonMessage.message.render_message = (
+              <p>
+                <Spin /> {lastJsonMessage.message.message}
+              </p>
+            );
+            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
+            return { ...prevMessages };
+          });
+          break;
+        case "MESSAGE":
+          setMessages((prevMessages) => {
+            lastJsonMessage.message.render_message = <p>{lastJsonMessage.message.message}</p>;
+            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
+            return { ...prevMessages };
+          });
           break;
       }
     }
@@ -46,7 +67,10 @@ export const Chat: React.FC = () => {
   const { mutate: sendMessageMutate } = useMutation({
     mutationFn: (payload: IMessage) => postFetcher("/api/chat/message", payload) as Promise<IMessage>,
     onSuccess: (message: IMessage) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => {
+        prevMessages[message.id] = message;
+        return { ...prevMessages };
+      });
       if (listRef.current) {
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
         (listRef.current as any).scrollToBottom(); // eslint-disable-line
@@ -57,38 +81,29 @@ export const Chat: React.FC = () => {
   const sendMessage = useCallback(
     (message: string) => {
       sendMessageMutate({
-        msg: message,
-        name: t("You"),
-        date: new Date().getTime().toString(),
+        id: v4(),
+        message,
+        user_name: t("You"),
+        timestamp: new Date().getTime(),
       });
     },
     [t, sendMessageMutate],
   );
 
   const messageData: MessageType[] = useMemo(() => {
-    return (
-      typing
-        ? [
-            ...messages,
-            {
-              msg: t("Typing..."),
-              name: t("AI Agent"),
-              date: new Date().getTime().toString(),
-            },
-          ]
-        : messages
-    ).map((value: IMessage, index: number) => {
-      const position = value.name === t("You") ? "right" : "left";
-      const date = Number.parseInt(value.date);
+    const messagesList = (messages ? Object.values(messages) : []).sort((a, b) => a.timestamp - b.timestamp);
+
+    return messagesList.map((value: IMessage) => {
+      const position = value.user_name === t("You") ? "right" : "left";
 
       return {
         position: position,
         type: "text",
-        title: value.name,
-        text: value.msg,
+        title: value.user_name,
+        text: value.render_message || value.message,
         focus: false,
-        id: index,
-        date: date,
+        id: value.id,
+        date: value.timestamp,
         titleColor: "#4f81a1",
         forwarded: false,
         replyButton: false,
@@ -98,7 +113,7 @@ export const Chat: React.FC = () => {
         retracted: false,
       };
     });
-  }, [messages, t, typing]);
+  }, [messages, t]);
 
   return (
     <div className={styles.chatArea}>
@@ -120,7 +135,7 @@ export const Chat: React.FC = () => {
         value={inputValue}
         rightButtons={
           <Button
-            disabled={!inputValue || typing || !isReady}
+            disabled={!isReady || !inputValue}
             onClick={() => {
               sendMessage(inputValue);
               setInputValue("");

@@ -1,4 +1,4 @@
-import { DashboardOutlined, MenuOutlined } from "@ant-design/icons";
+import { BookOutlined, MenuOutlined } from "@ant-design/icons";
 import { Button, Col, Dropdown, Row, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 
@@ -15,8 +15,8 @@ export const HeaderContent: React.FC = () => {
       {!isMobile && (
         <Col>
           <Space>
-            <Button type="link" icon={<DashboardOutlined />} onClick={() => navigate("/")}>
-              {t("Dashboard")}
+            <Button type="link" icon={<BookOutlined />} onClick={() => navigate("/")}>
+              {t("English Room")}
             </Button>
           </Space>
         </Col>
@@ -44,8 +44,8 @@ export const HeaderContent: React.FC = () => {
                     children: [
                       {
                         key: "/",
-                        label: t("Dashboard"),
-                        icon: <DashboardOutlined />,
+                        label: t("English Room"),
+                        icon: <BookOutlined />,
                       },
                     ],
                   },

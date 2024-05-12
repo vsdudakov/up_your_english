@@ -1,6 +1,6 @@
-import { getSessionId } from "@/helpers/fetchers";
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import useWebSocket from "react-use-websocket";
+import { SessionContext } from "../SessionProvider";
 
 interface IWsContext {
   sendMessage: (message: string) => void;
@@ -20,9 +20,9 @@ interface IWsProviderProps {
 }
 
 export const WsProvider: React.FC<IWsProviderProps> = ({ children }) => {
-  const sessionId = getSessionId();
+  const { session } = useContext(SessionContext);
   const { sendMessage, lastJsonMessage, readyState } = useWebSocket(
-    `${import.meta.env.VITE_WS_SERVER_DOMAIN}/api/ws?session_id=${sessionId}`,
+    `${import.meta.env.VITE_WS_SERVER_DOMAIN}/api/ws?sesssion_id=${session?.session_id}`,
     {
       shouldReconnect: () => true,
       retryOnError: true,

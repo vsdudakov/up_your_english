@@ -1,19 +1,10 @@
 import axios from "axios";
-import { v4 } from "uuid";
-
-export const getSessionId = () => {
-  if (!localStorage.getItem("sessionId")) {
-    localStorage.setItem("sessionId", v4());
-  }
-  return localStorage.getItem("sessionId");
-};
 
 const requestOptions = () => {
   return {
     withCredentials: true,
     headers: {
       "Content-Type": "application/json",
-      "Session-ID": getSessionId(),
     },
   };
 };
