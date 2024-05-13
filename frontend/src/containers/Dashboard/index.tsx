@@ -50,12 +50,7 @@ export const Dashboard = () => {
             }}
           >
             <Form.Item name="model" label={t("Model")} rules={[{ required: true }]}>
-              <Select
-                placeholder={t("Select Model")}
-                options={[
-                  { value: "gpt-3.5-turbo-instruct", label: "GPT-3" },
-                ]}
-              />
+              <Select placeholder={t("Select Model")} options={[{ value: "gpt-3.5-turbo-instruct", label: "GPT-3" }]} />
             </Form.Item>
             <Form.Item name="functionality" label={t("Functionality")} rules={[{ required: true }]}>
               <Select
