@@ -168,8 +168,11 @@ class AIAgentAdapter(BusAdapter):
             prompt=grammar_prompt,
             output_parser=StrOutputParser(),
         )
+        style_template = tmp.style_template.replace(
+            "{style}", self.style or "Let yourself get inspired by the randomness of the AI."
+        )
         style_prompt = get_prompt(
-            resources=tmp.grammar_template,
+            resources=style_template,
             prompt_template=PromptTemplate,
         )
         style_chain = get_chain(
@@ -178,7 +181,7 @@ class AIAgentAdapter(BusAdapter):
             output_parser=StrOutputParser(),
         )
         chain = SimpleSequentialChain(
-            chains=[grammar_chain, style_chain],
+            chains=[style_chain, grammar_chain],
         )
         async for chunk in get_stream(
             chain=chain,
@@ -186,7 +189,6 @@ class AIAgentAdapter(BusAdapter):
             config=runnable_config,
             prompt_kwargs={
                 "input": message.message,
-                "style": self.style or "Let yourself get inspired by the randomness of the AI.",
             },
         ):
             await send_message(

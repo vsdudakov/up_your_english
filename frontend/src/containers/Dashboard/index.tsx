@@ -43,7 +43,10 @@ export const Dashboard = () => {
             form={form}
             layout="vertical"
             onFinish={(values) => {
-              newSession(values);
+              newSession({
+                ...values,
+                style: values.functionality === "write-properly" ? values.style : null,
+              });
             }}
           >
             <Form.Item name="model" label={t("Model")} rules={[{ required: true }]}>

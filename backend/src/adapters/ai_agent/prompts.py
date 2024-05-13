@@ -7,13 +7,12 @@ grammar_template = """
 
 
 style_template = """
-    Change the style of “Text:” according the following rules “Style:” and place the result as the answer:
+    Rewrite the style of test “Text:” according the following rule “Style:” and place the result as the answer:
      Text: {input}
      Style: {style}
 """
 
 summarization_default_template = """
     Please provide a summary of “Text:”
-
      Text: {input}
 """

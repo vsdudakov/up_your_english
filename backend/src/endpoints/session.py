@@ -20,6 +20,8 @@ async def post_session(
     response.set_cookie(key="functionality", value=payload.functionality.value, httponly=True)
     if payload.style:
         response.set_cookie(key="style", value=payload.style, httponly=True)
+    else:
+        response.delete_cookie("style")
     response.set_cookie(key="session_id", value=str(session_id), httponly=True)
     return SessionSchema(
         session_id=session_id,
