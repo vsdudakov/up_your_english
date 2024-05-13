@@ -24,6 +24,7 @@ class WebsocketService(Service):
         session_id: uuid.UUID,
         model: EModel,
         functionality: EFunctionality,
+        style: str | None,
         websocket: WebSocket,
     ) -> None:
         self.ai_agent_adapter = self.bus.get_adapter(AIAgentAdapter)
@@ -33,6 +34,7 @@ class WebsocketService(Service):
             session_id=session_id,
             model=model,
             functionality=functionality,
+            style=style,
         )
         self.websocket = websocket
         await self.websocket.accept()

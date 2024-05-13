@@ -5,7 +5,8 @@ import { createContext } from "react";
 interface ISession {
   session_id: string;
   model: string;
-  topic: string;
+  functionality: string;
+  style?: string;
 }
 
 interface ISessionContext {

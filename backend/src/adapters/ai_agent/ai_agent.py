@@ -21,6 +21,7 @@ class AIAgentAdapter(BusAdapter):
     session_id: uuid.UUID | None
     model: EModel | None
     functionality: EFunctionality | None
+    style: str | None
 
     user_name = "English Teacher"
 
@@ -38,10 +39,12 @@ class AIAgentAdapter(BusAdapter):
         session_id: uuid.UUID,
         model: EModel,
         functionality: EFunctionality,
+        style: str | None = None,
     ) -> None:
         self.session_id = session_id
         self.model = model
         self.functionality = functionality
+        self.style = style
 
     async def welcome_message(
         self,
@@ -52,14 +55,20 @@ class AIAgentAdapter(BusAdapter):
         message_id = uuid.uuid4()
         model = self.model.value.lower()
         functionality = self.functionality.value.lower()
+        message = "Welcome to English class room."
+        if self.model:
+            message += f" Your model is {model}."
+        if self.functionality:
+            message += f" Your functionality is {functionality}."
+        if self.style:
+            message += f" Your style is {self.style}."
+        message += " Please provide your message below."
         await send_message(
             EMessageType.WELCOME,
             MessageSchema(
                 id=message_id,
                 user_name=self.user_name,
-                message=f"""
-                    Welcome to English class room. Your model is {model}. Your functionality is {functionality}. Please provide your message below.
-                """,
+                message=message,
                 timestamp=int(time() * 1000),
             ),
         )
@@ -139,7 +148,6 @@ class AIAgentAdapter(BusAdapter):
         message_id: uuid.UUID,
         message: MessageSchema,
         send_message: tp.Any,
-        style: str = "Let yourself get inspired by the randomness of the AI.",
     ) -> None:
         run_collector = RunCollectorCallbackHandler()
         runnable_config = RunnableConfig(callbacks=[run_collector])
@@ -178,7 +186,7 @@ class AIAgentAdapter(BusAdapter):
             config=runnable_config,
             prompt_kwargs={
                 "input": message.message,
-                "style": style,
+                "style": self.style or "Let yourself get inspired by the randomness of the AI.",
             },
         ):
             await send_message(

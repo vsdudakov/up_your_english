@@ -4,6 +4,6 @@ body {
 }
 
 
-.rce-mlist {
-  padding-bottom: 300px !important;
+.rce-container-mbox {
+  margin-bottom: 50px !important;
 }

@@ -21,9 +21,11 @@ class EFunctionality(StrEnum):
 class CreateSessionSchema(BaseModel):
     model: EModel
     functionality: EFunctionality
+    style: str | None = None
 
 
 class SessionSchema(BaseModel):
     session_id: uuid.UUID
     model: EModel
     functionality: EFunctionality
+    style: str | None = None

@@ -46,12 +46,16 @@ def get_ws_session_id(websocket: WebSocket) -> uuid.UUID:
 def get_ws_model(websocket: WebSocket) -> EModel:
     model: str | None = websocket.cookies.get("model")
     if model is None:
-        raise WebSocketDisconnect(code=401, reason="session_id is required")
+        raise WebSocketDisconnect(code=401, reason="model is required")
     return EModel(model)
 
 
 def get_ws_functionality(websocket: WebSocket) -> EFunctionality:
     functionality: str | None = websocket.cookies.get("functionality")
     if functionality is None:
-        raise WebSocketDisconnect(code=401, reason="session_id is required")
+        raise WebSocketDisconnect(code=401, reason="functionality is required")
     return EFunctionality(functionality)
+
+
+def get_ws_style(websocket: WebSocket) -> str | None:
+    return websocket.cookies.get("style")

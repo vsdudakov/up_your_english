@@ -18,6 +18,8 @@ async def post_session(
     session_id = uuid.uuid4()
     response.set_cookie(key="model", value=payload.model.value, httponly=True)
     response.set_cookie(key="functionality", value=payload.functionality.value, httponly=True)
+    if payload.style:
+        response.set_cookie(key="style", value=payload.style, httponly=True)
     response.set_cookie(key="session_id", value=str(session_id), httponly=True)
     return SessionSchema(
         session_id=session_id,
@@ -33,10 +35,12 @@ async def get_session(
     session_id = request.cookies.get("session_id")
     model = request.cookies.get("model")
     functionality = request.cookies.get("functionality")
+    style = request.cookies.get("style")
     if not session_id or not model or not functionality:
         raise HTTPException(status_code=401, detail="Session not found.")
     return SessionSchema(
         session_id=uuid.UUID(session_id),
         model=EModel(model),
         functionality=EFunctionality(functionality),
+        style=style,
     )

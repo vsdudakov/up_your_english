@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Empty, Form, Row, Select } from "antd";
+import { Button, Card, Col, Empty, Form, Input, Row, Select } from "antd";
 
 import { Chat } from "@/components/Chat";
 import { FloatMenu } from "@/components/FloatMenu";
@@ -8,16 +8,20 @@ import { useTrans } from "@/hooks/useTrans";
 import { SessionContext } from "@/providers/SessionProvider";
 import { WsProvider } from "@/providers/WsProvider";
 import { useForm } from "antd/es/form/Form";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./index.module.css";
 
 export const Dashboard = () => {
   const [form] = useForm();
   const { t } = useTrans();
   const { session, newSession } = useContext(SessionContext);
+  const [showStyle, setShowStyle] = useState<boolean>(false);
 
   useEffect(() => {
     form.setFieldsValue(session);
+    if (session?.functionality === "write-properly") {
+      setShowStyle(true);
+    }
   }, [session, form]);
 
   return (
@@ -62,8 +66,16 @@ export const Dashboard = () => {
                   { value: "write-properly", label: "Write Properly" },
                   { value: "summarize", label: "Summarize" },
                 ]}
+                onSelect={(value) => {
+                  setShowStyle(value === "write-properly");
+                }}
               />
             </Form.Item>
+            {showStyle && (
+              <Form.Item name="style" label={t("Style Context")}>
+                <Input placeholder={t("Provide Style Context")} />
+              </Form.Item>
+            )}
             <Form.Item>
               <Button type="primary" htmlType="submit">
                 {t("Reset Session")}

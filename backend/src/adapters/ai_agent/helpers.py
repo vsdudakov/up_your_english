@@ -10,8 +10,14 @@ from langchain.prompts import PromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain_core.language_models.llms import BaseLLM
 
+from src.settings import settings
+
 
 def get_llm(**kwargs: tp.Any) -> BaseLLM:
+    kwargs["temperature"] = settings.TEMPERATURE
+    kwargs["max_tokens"] = settings.MAX_TOKENS
+    kwargs["frequency_penalty"] = settings.FREQUENCY_PENALTY
+    kwargs["top_p"] = settings.TOP_P
     return OpenAI(**kwargs)
 
 
