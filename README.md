@@ -1,6 +1,11 @@
 # Up Your English
 Enhance your English proficiency with our comprehensive tool. This application combines the power of modern technologies and artificial intelligence to provide an interactive learning experience.
 
+## Screenshots
+
+![Screenshot](https://github.com/vsdudakov/up_your_english/blob/main/screenshot.png)
+
+
 
 ## Quickstart
  - Running the Project with Docker
