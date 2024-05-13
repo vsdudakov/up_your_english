@@ -53,10 +53,6 @@ export const Dashboard = () => {
               <Select
                 placeholder={t("Select Model")}
                 options={[
-                  { value: "davinci-002", label: "Davinci" },
-                  { value: "text-davinci-003", label: "Text Davinci" },
-                  { value: "babbage-002", label: "Babbage" },
-                  { value: "text-ada-001", label: "Ada" },
                   { value: "gpt-3.5-turbo-instruct", label: "GPT-3" },
                 ]}
               />

@@ -5,10 +5,6 @@ from pydantic import BaseModel
 
 
 class EModel(StrEnum):
-    DAVINCI = "davinci-002"
-    TEXT_DAVINCI = "text-davinci-003"
-    BABBAGE = "babbage-002"
-    ADA = "text-ada-001"
     GPT3 = "gpt-3.5-turbo-instruct"
 
 
