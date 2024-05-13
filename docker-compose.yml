@@ -17,6 +17,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - REDIS_DSN=redis://redis:6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     ports:
       - 8000:8000
     command: make start

@@ -2,12 +2,13 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from "re
 import { Input as ChatInput, MessageList, type MessageType } from "react-chat-elements";
 import "react-chat-elements/dist/main.css";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Spin, theme } from "antd";
+import { Button, theme } from "antd";
 import { v4 } from "uuid";
 
 import { postFetcher } from "@/helpers/fetchers";
 import { useTrans } from "@/hooks/useTrans";
 
+import { useMessage } from "@/hooks/useMessage";
 import type { IMessage } from "@/interfaces/chat";
 import { SessionContext } from "@/providers/SessionProvider";
 import { WsContext } from "@/providers/WsProvider";
@@ -23,7 +24,8 @@ export const Chat: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const { token } = useToken();
   const [messages, setMessages] = useState<Record<string, IMessage>>({});
-  const { lastJsonMessage, isReady } = useContext(WsContext);
+  const { isReady } = useContext(WsContext);
+  const message = useMessage();
 
   const { t } = useTrans();
 
@@ -33,36 +35,13 @@ export const Chat: React.FC = () => {
   }, [session?.session_id]);
 
   useEffect(() => {
-    if (lastJsonMessage) {
-      switch (lastJsonMessage.message_type) {
-        case "WELCOME":
-          setMessages((prevMessages) => {
-            lastJsonMessage.message.render_message = <p>{lastJsonMessage.message.message}</p>;
-            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
-            return { ...prevMessages };
-          });
-          break;
-        case "TYPING":
-          setMessages((prevMessages) => {
-            lastJsonMessage.message.render_message = (
-              <p>
-                <Spin /> {lastJsonMessage.message.message}
-              </p>
-            );
-            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
-            return { ...prevMessages };
-          });
-          break;
-        case "MESSAGE":
-          setMessages((prevMessages) => {
-            lastJsonMessage.message.render_message = <p>{lastJsonMessage.message.message}</p>;
-            prevMessages[lastJsonMessage.message.id] = lastJsonMessage.message;
-            return { ...prevMessages };
-          });
-          break;
-      }
+    if (message) {
+      setMessages((prevMessages) => {
+        prevMessages[message.id] = message;
+        return { ...prevMessages };
+      });
     }
-  }, [lastJsonMessage]);
+  }, [message]);
 
   const { mutate: sendMessageMutate } = useMutation({
     mutationFn: (payload: IMessage) => postFetcher("/api/chat/message", payload) as Promise<IMessage>,
@@ -100,7 +79,7 @@ export const Chat: React.FC = () => {
         position: position,
         type: "text",
         title: value.user_name,
-        text: value.render_message || value.message,
+        text: value.message,
         focus: false,
         id: value.id,
         date: value.timestamp,

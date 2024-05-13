@@ -4,7 +4,7 @@ from collections.abc import Callable
 from fastapi import Depends, HTTPException, Request, WebSocket, WebSocketDisconnect
 
 from src.core import Bus, Service
-from src.schemas.session import EModel, ETopic
+from src.schemas.session import EFunctionality, EModel
 
 
 def get_bus(request: Request) -> Bus:
@@ -23,20 +23,6 @@ def get_session_id(request: Request) -> uuid.UUID:
     if session_id is None:
         raise HTTPException(status_code=401, detail="session_id is required")
     return uuid.UUID(session_id)
-
-
-def get_model(request: Request) -> EModel:
-    model: str | None = request.cookies.get("model")
-    if model is None:
-        raise HTTPException(status_code=401, detail="model is required")
-    return EModel(model)
-
-
-def get_topic(request: Request) -> ETopic:
-    topic: str | None = request.cookies.get("topic")
-    if topic is None:
-        raise HTTPException(status_code=401, detail="topic is required")
-    return ETopic(topic)
 
 
 def get_ws_bus(websocket: WebSocket) -> Bus:
@@ -64,8 +50,8 @@ def get_ws_model(websocket: WebSocket) -> EModel:
     return EModel(model)
 
 
-def get_ws_topic(websocket: WebSocket) -> ETopic:
-    topic: str | None = websocket.cookies.get("topic")
-    if topic is None:
+def get_ws_functionality(websocket: WebSocket) -> EFunctionality:
+    functionality: str | None = websocket.cookies.get("functionality")
+    if functionality is None:
         raise WebSocketDisconnect(code=401, reason="session_id is required")
-    return ETopic(topic)
+    return EFunctionality(functionality)

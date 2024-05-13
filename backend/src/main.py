@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.adapters.ai_agent import AIAgentAdapter
+from src.adapters.ai_agent.ai_agent import AIAgentAdapter
 from src.adapters.queue import QueueAdapter
 from src.core import Bus
 from src.endpoints.router import api_router

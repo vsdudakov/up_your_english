@@ -2,8 +2,8 @@ import uuid
 
 from fastapi import APIRouter, Depends, WebSocket
 
-from src.endpoints.deps import get_ws_model, get_ws_service, get_ws_session_id, get_ws_topic
-from src.schemas.session import EModel, ETopic
+from src.endpoints.deps import get_ws_functionality, get_ws_model, get_ws_service, get_ws_session_id
+from src.schemas.session import EFunctionality, EModel
 from src.services.websocket import WebsocketService
 
 router = APIRouter(
@@ -17,14 +17,14 @@ async def websocket(
     websocket: WebSocket,
     session_id: uuid.UUID = Depends(get_ws_session_id),
     model: EModel = Depends(get_ws_model),
-    topic: ETopic = Depends(get_ws_topic),
+    functionality: EFunctionality = Depends(get_ws_functionality),
     websocket_service: WebsocketService = Depends(get_ws_service(WebsocketService)),
 ) -> None:
     try:
         await websocket_service.accept(
             session_id,
             model,
-            topic,
+            functionality,
             websocket,
         )
         await websocket_service.listen()

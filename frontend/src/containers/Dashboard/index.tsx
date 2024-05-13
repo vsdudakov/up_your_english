@@ -54,13 +54,13 @@ export const Dashboard = () => {
                 ]}
               />
             </Form.Item>
-            <Form.Item name="topic" label={t("Topic")} rules={[{ required: true }]}>
+            <Form.Item name="functionality" label={t("Functionality")} rules={[{ required: true }]}>
               <Select
-                placeholder={t("Select Topic")}
+                placeholder={t("Select Functionality")}
                 options={[
-                  { value: "GRAMMAR", label: "Grammar" },
-                  { value: "STYLE", label: "Style" },
-                  { value: "SUMMARIZATION", label: "Summarization" },
+                  { value: "write-the-same-grammar-fixed", label: "Write The Same Grammar Fixed" },
+                  { value: "write-properly", label: "Write Properly" },
+                  { value: "summarize", label: "Summarize" },
                 ]}
               />
             </Form.Item>

@@ -4,11 +4,11 @@ import uuid
 import orjson
 from fastapi import WebSocket
 
-from src.adapters.ai_agent import AIAgentAdapter
+from src.adapters.ai_agent.ai_agent import AIAgentAdapter
 from src.adapters.queue import QueueAdapter
 from src.core import Service
 from src.schemas.chat import EMessageType, MessageSchema
-from src.schemas.session import EModel, ETopic
+from src.schemas.session import EFunctionality, EModel
 from src.schemas.websocket import WsMessageSchema
 from src.settings import settings
 
@@ -23,7 +23,7 @@ class WebsocketService(Service):
         self,
         session_id: uuid.UUID,
         model: EModel,
-        topic: ETopic,
+        functionality: EFunctionality,
         websocket: WebSocket,
     ) -> None:
         self.ai_agent_adapter = self.bus.get_adapter(AIAgentAdapter)
@@ -32,7 +32,7 @@ class WebsocketService(Service):
         self.ai_agent_adapter.set_session(
             session_id=session_id,
             model=model,
-            topic=topic,
+            functionality=functionality,
         )
         self.websocket = websocket
         await self.websocket.accept()
@@ -72,5 +72,5 @@ class WebsocketService(Service):
         )
         try:
             await self.websocket.send_text(orjson.dumps(response_message.model_dump()).decode())
-        except Exception:
-            logger.exception("Failed to send message to WebSocket")
+        except Exception:  # noqa: BLE001
+            logger.warning("Failed to send message to WebSocket")

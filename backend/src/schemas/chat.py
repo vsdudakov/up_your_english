@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class EMessageType(StrEnum):
     WELCOME = "WELCOME"
     MESSAGE = "MESSAGE"
+    MESSAGE_CHUNK = "MESSAGE_CHUNK"
     TYPING = "TYPING"
 
 
